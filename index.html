@@ -7,7 +7,7 @@
     </form>
     <button v-on:click="hideModal">✖</button>
   </div>
-  <button v-if="modal.type !== 'ADD_WORKOUT'" v-on:click="modal = { type: 'ADD_WORKOUT', name: '' }">Add Workout</button>
+  <button v-if="modal.type !== 'ADD_WORKOUT'" v-on:click="openAddWorkoutModal">Add Workout</button>
   <div v-for="(workout, i) in workouts">
     <h1>{{ workout.name }}</h1>
     <h3>{{ workout.count }}</h3>
@@ -39,6 +39,9 @@
     methods: {
       hideModal: function() {
         this.modal = { type: "HIDDEN" };
+      },
+      openAddWorkoutModal: function() {
+        this.modal = { type: 'ADD_WORKOUT', name: '' };
       },
       addWorkout: function() {
         this.workouts.push({ name: this.modal.name, count: 0 });
