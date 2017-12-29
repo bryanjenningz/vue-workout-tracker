@@ -1,13 +1,13 @@
 <script src="https://cdn.jsdelivr.net/npm/vue"></script>
 <div id="app">
-  <div v-if="showInput">
+  <div v-if="modal.type === 'ADD_WORKOUT'">
     <form v-on:submit.prevent="addWorkout" style="display: inline">
-      <input v-model="inputText" placeholder="e.g. Pushups">
+      <input v-model="modal.name" placeholder="e.g. Pushups">
       <button>+</button>
     </form>
-    <button v-on:click="showInput = false">✖</button>
+    <button v-on:click="modal = { type: 'HIDDEN' }">✖</button>
   </div>
-  <button v-if="!showInput" v-on:click="showInput = true">Add Workout</button>
+  <button v-if="modal.type !== 'ADD_WORKOUT'" v-on:click="modal = { type: 'ADD_WORKOUT', name: '' }">Add Workout</button>
   <div v-for="(workout, i) in workouts">
     <h1>{{ workout.name }}</h1>
     <h3>{{ workout.count }}</h3>
@@ -17,14 +17,14 @@
     <button v-on:click="remove(i)">✖</button>
     <button v-on:click="edit(i)">✎</button>
   </div>
-  <div v-if="typeof editIndex === 'number'">
-    <h1>Editing {{ workouts[editIndex].name }}</h1>
-    <input v-model="editText" placeholder="e.g. Pushups">
+  <div v-if="modal.type === 'EDIT_WORKOUT'">
+    <h1>Editing {{ workouts[modal.index].name }}</h1>
+    <input v-model="modal.newName" placeholder="e.g. Pushups">
     <button v-on:click="saveEdit">Save</button>
     <button v-on:click="cancelEdit">Cancel</button>
   </div>
-  <div v-if="typeof removeIndex === 'number'">
-    <h1>Are you sure you want to remove {{ workouts[removeIndex].name }}?</h1>
+  <div v-if="modal.type === 'REMOVE_WORKOUT'">
+    <h1>Are you sure you want to remove {{ workouts[modal.index].name }}?</h1>
     <button v-on:click="saveRemove">Yes</button>
     <button v-on:click="cancelRemove">No</button>
   </div>
@@ -33,18 +33,13 @@
   const app = new Vue({
     el: "#app",
     data: {
-      showInput: false,
-      inputText: "",
-      editIndex: null,
-      editText: "",
-      removeIndex: null,
+      modal: { type: "HIDDEN" }, // { type: "HIDDEN" } | { type: "ADD_WORKOUT", name: string } | { type: "EDIT_WORKOUT", index: number, newName: string } | { type: "REMOVE_WORKOUT", index: number }
       workouts: JSON.parse(localStorage.workouts || JSON.stringify([{ name: "Pushups", count: 0 }]))
     },
     methods: {
       addWorkout: function() {
-        this.workouts.push({ name: this.inputText, count: 0 });
-        this.inputText = "";
-        this.showInput = false;
+        this.workouts.push({ name: this.modal.name, count: 0 });
+        this.modal = { type: "HIDDEN" };
       },
       increment: function(index) {
         Vue.set(this.workouts, index, { name: this.workouts[index].name, count: this.workouts[index].count + 1 });
@@ -56,27 +51,24 @@
         Vue.set(this.workouts, index, { name: this.workouts[index].name, count: 0 });
       },
       remove: function(index) {
-        this.removeIndex = index;
+        this.modal = { type: "REMOVE_WORKOUT", index: index };
       },
       saveRemove: function() {
-        this.workouts.splice(this.removeIndex, 1);
-        this.removeIndex = null;
+        this.workouts.splice(this.modal.index, 1);
+        this.modal = { type: "HIDDEN" };
       },
       cancelRemove: function() {
-        this.removeIndex = null;
+        this.modal = { type: "HIDDEN" };
       },
       edit: function(index) {
-        this.editText = this.workouts[index].name;
-        this.editIndex = index;
+        this.modal = { type: "EDIT_WORKOUT", index: index, newName: this.workouts[index].name };
       },
       saveEdit: function() {
-        Vue.set(this.workouts, this.editIndex, { name: this.editText, count: this.workouts[this.editIndex].count });
-        this.editText = "";
-        this.editIndex = null;
+        Vue.set(this.workouts, this.modal.index, { name: this.modal.newName, count: this.workouts[this.modal.index].count });
+        this.modal = { type: "HIDDEN" };
       },
       cancelEdit: function() {
-        this.editText = "";
-        this.editIndex = null;
+        this.modal = { type: "HIDDEN" };
       },
     },
     watch: {
