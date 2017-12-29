@@ -14,18 +14,18 @@
     <button v-on:click="increment(i)">+</button>
     <button v-on:click="decrement(i)">-</button>
     <button v-on:click="reset(i)">↺</button>
-    <button v-on:click="remove(i)">✖</button>
-    <button v-on:click="edit(i)">✎</button>
+    <button v-on:click="showEditModal(i)">✎</button>
+    <button v-on:click="showRemoveModal(i)">✖</button>
   </div>
   <div v-if="modal.type === 'EDIT_WORKOUT'">
     <h1>Editing {{ workouts[modal.index].name }}</h1>
     <input v-model="modal.newName" placeholder="e.g. Pushups">
-    <button v-on:click="saveEdit">Save</button>
+    <button v-on:click="editWorkout">Save</button>
     <button v-on:click="hideModal">Cancel</button>
   </div>
   <div v-if="modal.type === 'REMOVE_WORKOUT'">
     <h1>Are you sure you want to remove {{ workouts[modal.index].name }}?</h1>
-    <button v-on:click="saveRemove">Yes</button>
+    <button v-on:click="removeWorkout">Yes</button>
     <button v-on:click="hideModal">No</button>
   </div>
 </div>
@@ -53,18 +53,18 @@
       reset: function(index) {
         Vue.set(this.workouts, index, { name: this.workouts[index].name, count: 0 });
       },
-      remove: function(index) {
-        this.modal = { type: "REMOVE_WORKOUT", index: index };
-      },
-      saveRemove: function() {
-        this.workouts.splice(this.modal.index, 1);
-        this.hideModal();
-      },
-      edit: function(index) {
+      showEditModal: function(index) {
         this.modal = { type: "EDIT_WORKOUT", index: index, newName: this.workouts[index].name };
       },
-      saveEdit: function() {
+      editWorkout: function() {
         Vue.set(this.workouts, this.modal.index, { name: this.modal.newName, count: this.workouts[this.modal.index].count });
+        this.hideModal();
+      },
+      showRemoveModal: function(index) {
+        this.modal = { type: "REMOVE_WORKOUT", index: index };
+      },
+      removeWorkout: function() {
+        this.workouts.splice(this.modal.index, 1);
         this.hideModal();
       },
     },
