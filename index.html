@@ -1,0 +1,88 @@
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<div id="app">
+  <div v-if="showInput">
+    <form v-on:submit.prevent="addWorkout" style="display: inline">
+      <input v-model="inputText" placeholder="e.g. Pushups">
+      <button>+</button>
+    </form>
+    <button v-on:click="showInput = false">✖</button>
+  </div>
+  <button v-if="!showInput" v-on:click="showInput = true">Add Workout</button>
+  <div v-for="(workout, i) in workouts">
+    <h1>{{ workout.name }}</h1>
+    <h3>{{ workout.count }}</h3>
+    <button v-on:click="increment(i)">+</button>
+    <button v-on:click="decrement(i)">-</button>
+    <button v-on:click="reset(i)">↺</button>
+    <button v-on:click="remove(i)">✖</button>
+    <button v-on:click="edit(i)">✎</button>
+  </div>
+  <div v-if="typeof editIndex === 'number'">
+    <h1>Editing {{ workouts[editIndex].name }}</h1>
+    <input v-model="editText" placeholder="e.g. Pushups">
+    <button v-on:click="saveEdit">Save</button>
+    <button v-on:click="cancelEdit">Cancel</button>
+  </div>
+  <div v-if="typeof removeIndex === 'number'">
+    <h1>Are you sure you want to remove {{ workouts[removeIndex].name }}?</h1>
+    <button v-on:click="saveRemove">Yes</button>
+    <button v-on:click="cancelRemove">No</button>
+  </div>
+</div>
+<script>
+  const app = new Vue({
+    el: "#app",
+    data: {
+      showInput: false,
+      inputText: "",
+      editIndex: null,
+      editText: "",
+      removeIndex: null,
+      workouts: JSON.parse(localStorage.workouts || JSON.stringify([{ name: "Pushups", count: 0 }]))
+    },
+    methods: {
+      addWorkout: function() {
+        this.workouts.push({ name: this.inputText, count: 0 });
+        this.inputText = "";
+        this.showInput = false;
+      },
+      increment: function(index) {
+        Vue.set(this.workouts, index, { name: this.workouts[index].name, count: this.workouts[index].count + 1 });
+      },
+      decrement: function(index) {
+        Vue.set(this.workouts, index, { name: this.workouts[index].name, count: this.workouts[index].count - 1 });
+      },
+      reset: function(index) {
+        Vue.set(this.workouts, index, { name: this.workouts[index].name, count: 0 });
+      },
+      remove: function(index) {
+        this.removeIndex = index;
+      },
+      saveRemove: function() {
+        this.workouts.splice(this.removeIndex, 1);
+        this.removeIndex = null;
+      },
+      cancelRemove: function() {
+        this.removeIndex = null;
+      },
+      edit: function(index) {
+        this.editText = this.workouts[index].name;
+        this.editIndex = index;
+      },
+      saveEdit: function() {
+        Vue.set(this.workouts, this.editIndex, { name: this.editText, count: this.workouts[this.editIndex].count });
+        this.editText = "";
+        this.editIndex = null;
+      },
+      cancelEdit: function() {
+        this.editText = "";
+        this.editIndex = null;
+      },
+    },
+    watch: {
+      workouts: function() {
+        localStorage.workouts = JSON.stringify(this.workouts);
+      }
+    }
+  });
+</script>
