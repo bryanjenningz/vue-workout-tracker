@@ -5,7 +5,7 @@
       <input v-model="modal.name" placeholder="e.g. Pushups">
       <button>+</button>
     </form>
-    <button v-on:click="modal = { type: 'HIDDEN' }">✖</button>
+    <button v-on:click="hideModal">✖</button>
   </div>
   <button v-if="modal.type !== 'ADD_WORKOUT'" v-on:click="modal = { type: 'ADD_WORKOUT', name: '' }">Add Workout</button>
   <div v-for="(workout, i) in workouts">
@@ -21,12 +21,12 @@
     <h1>Editing {{ workouts[modal.index].name }}</h1>
     <input v-model="modal.newName" placeholder="e.g. Pushups">
     <button v-on:click="saveEdit">Save</button>
-    <button v-on:click="cancelEdit">Cancel</button>
+    <button v-on:click="hideModal">Cancel</button>
   </div>
   <div v-if="modal.type === 'REMOVE_WORKOUT'">
     <h1>Are you sure you want to remove {{ workouts[modal.index].name }}?</h1>
     <button v-on:click="saveRemove">Yes</button>
-    <button v-on:click="cancelRemove">No</button>
+    <button v-on:click="hideModal">No</button>
   </div>
 </div>
 <script>
@@ -37,9 +37,12 @@
       workouts: JSON.parse(localStorage.workouts || JSON.stringify([{ name: "Pushups", count: 0 }]))
     },
     methods: {
+      hideModal: function() {
+        this.modal = { type: "HIDDEN" };
+      },
       addWorkout: function() {
         this.workouts.push({ name: this.modal.name, count: 0 });
-        this.modal = { type: "HIDDEN" };
+        this.hideModal();
       },
       increment: function(index) {
         Vue.set(this.workouts, index, { name: this.workouts[index].name, count: this.workouts[index].count + 1 });
@@ -55,20 +58,14 @@
       },
       saveRemove: function() {
         this.workouts.splice(this.modal.index, 1);
-        this.modal = { type: "HIDDEN" };
-      },
-      cancelRemove: function() {
-        this.modal = { type: "HIDDEN" };
+        this.hideModal();
       },
       edit: function(index) {
         this.modal = { type: "EDIT_WORKOUT", index: index, newName: this.workouts[index].name };
       },
       saveEdit: function() {
         Vue.set(this.workouts, this.modal.index, { name: this.modal.newName, count: this.workouts[this.modal.index].count });
-        this.modal = { type: "HIDDEN" };
-      },
-      cancelEdit: function() {
-        this.modal = { type: "HIDDEN" };
+        this.hideModal();
       },
     },
     watch: {
