@@ -1,80 +1,142 @@
-<script src="https://cdn.jsdelivr.net/npm/vue"></script>
-<div id="app">
-  <div v-if="modal.type === 'ADD_WORKOUT'">
-    <form v-on:submit.prevent="addWorkout" style="display: inline">
-      <input v-model="modal.name" placeholder="e.g. Pushups">
-      <button>+</button>
-    </form>
-    <button v-on:click="hideModal">✖</button>
+<!doctype html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-alpha.2/css/materialize.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-alpha.2/js/materialize.min.js"></script>
+</head>
+<body>
+  <div id="app">
+    <nav class="blue darken-2">
+      <div class="nav-wrapper container">
+        <a href="#!" class="brand-logo"><i class="material-icons">fitness_center</i>Habits</a>
+        <ul class="right hide-on-med-and-down">
+          <li><a href="#"><i class="material-icons">search</i></a></li>
+          <li><a href="#"><i class="material-icons">view_module</i></a></li>
+          <li><a href="#"><i class="material-icons">refresh</i></a></li>
+          <li><a href="#"><i class="material-icons">more_vert</i></a></li>
+        </ul>
+      </div>
+    </nav>
+    <div v-if="modal.type === 'ADD_WORKOUT'">
+      <div class="row">
+        <form v-on:submit.prevent="addWorkout" style="display: inline">
+          <div class="input-field col s6">
+            <input id="first_name" class="validate" v-model="modal.name" type="text">
+            <label for="first_name">Workout Name</label>
+          </div>
+          <button class="blue darken-2 waves-effect waves-light btn">
+            <i class="material-icons">check</i>
+          </button>
+        </form>
+        <button v-on:click="hideModal" class="blue darken-2 waves-effect waves-light btn">
+          <i class="material-icons">close</i>
+        </button>
+      </div>
+    </div>
+    <button
+      v-if="modal.type !== 'ADD_WORKOUT'"
+      v-on:click="showAddModal"
+      class="btn-floating btn-large waves-effect waves-light blue darken-2"
+      style="position: fixed; bottom: 5%; right: 5%">
+      <i class="material-icons">add</i>
+    </button>
+    <div v-for="(workout, i) in workouts" class="center-align">
+      <h2>{{ workout.name }}</h2>
+      <h3>{{ workout.count }}</h3>
+      <button v-on:click="increment(i)" class="blue darken-2 waves-effect waves-light btn">
+        <i class="material-icons">add</i>
+      </button>
+      <button v-on:click="decrement(i)" class="blue darken-2 waves-effect waves-light btn">
+        <i class="material-icons">remove</i>
+      </button>
+      <button v-on:click="reset(i)" class="blue darken-2 waves-effect waves-light btn">
+        <i class="material-icons">refresh</i>
+      </button>
+      <button v-on:click="showEditModal(i)" class="blue darken-2 waves-effect waves-light btn">
+        <i class="material-icons">edit</i>
+      </button>
+      <button v-on:click="showRemoveModal(i)" class="blue darken-2 waves-effect waves-light btn">
+        <i class="material-icons">close</i>
+      </button>
+      <hr>
+    </div>
+    <div v-if="modal.type === 'EDIT_WORKOUT'">
+      <h3>Editing {{ workouts[modal.index].name }}</h3>
+      <div class="row">
+        <div class="input-field col s6">
+          <input id="new_name" v-model="modal.newName" class="validate" type="text" placeholder="e.g. Pushups">
+          <label for="new_name">New Workout Name</label>
+        </div>
+        <button v-on:click="editWorkout" class="blue darken-2 waves-effect waves-light btn">
+          <i class="material-icons">check</i>
+        </button>
+        <button v-on:click="hideModal" class="blue darken-2 waves-effect waves-light btn">
+          <i class="material-icons">close</i>
+        </button>
+      </div>
+    </div>
+    <div v-if="modal.type === 'REMOVE_WORKOUT'">
+      <h3>Are you sure you want to remove {{ workouts[modal.index].name }}?</h3>
+      <button v-on:click="removeWorkout" class="blue darken-2 waves-effect waves-light btn">
+        <i class="material-icons">check</i>
+      </button>
+      <button v-on:click="hideModal" class="blue darken-2 waves-effect waves-light btn">
+        <i class="material-icons">close</i>
+      </button>
+    </div>
   </div>
-  <button v-if="modal.type !== 'ADD_WORKOUT'" v-on:click="showAddModal">Add Workout</button>
-  <div v-for="(workout, i) in workouts">
-    <h1>{{ workout.name }}</h1>
-    <h3>{{ workout.count }}</h3>
-    <button v-on:click="increment(i)">+</button>
-    <button v-on:click="decrement(i)">-</button>
-    <button v-on:click="reset(i)">↺</button>
-    <button v-on:click="showEditModal(i)">✎</button>
-    <button v-on:click="showRemoveModal(i)">✖</button>
-  </div>
-  <div v-if="modal.type === 'EDIT_WORKOUT'">
-    <h1>Editing {{ workouts[modal.index].name }}</h1>
-    <input v-model="modal.newName" placeholder="e.g. Pushups">
-    <button v-on:click="editWorkout">Save</button>
-    <button v-on:click="hideModal">Cancel</button>
-  </div>
-  <div v-if="modal.type === 'REMOVE_WORKOUT'">
-    <h1>Are you sure you want to remove {{ workouts[modal.index].name }}?</h1>
-    <button v-on:click="removeWorkout">Yes</button>
-    <button v-on:click="hideModal">No</button>
-  </div>
-</div>
-<script>
-  const app = new Vue({
-    el: "#app",
-    data: {
-      modal: { type: "HIDDEN" }, // { type: "HIDDEN" } | { type: "ADD_WORKOUT", name: string } | { type: "EDIT_WORKOUT", index: number, newName: string } | { type: "REMOVE_WORKOUT", index: number }
-      workouts: JSON.parse(localStorage.workouts || JSON.stringify([{ name: "Pushups", count: 0 }]))
-    },
-    methods: {
-      hideModal: function() {
-        this.modal = { type: "HIDDEN" };
+  <script>
+    const app = new Vue({
+      el: "#app",
+      data: {
+        modal: { type: "HIDDEN" }, // { type: "HIDDEN" } | { type: "ADD_WORKOUT", name: string } | { type: "EDIT_WORKOUT", index: number, newName: string } | { type: "REMOVE_WORKOUT", index: number }
+        workouts: JSON.parse(localStorage.workouts || JSON.stringify([{ name: "Pushups", count: 0 }]))
       },
-      showAddModal: function() {
-        this.modal = { type: 'ADD_WORKOUT', name: '' };
+      methods: {
+        hideModal: function() {
+          this.modal = { type: "HIDDEN" };
+        },
+        showAddModal: function() {
+          this.modal = { type: "ADD_WORKOUT", name: "" };
+        },
+        addWorkout: function() {
+          this.workouts.push({ name: this.modal.name, count: 0 });
+          this.hideModal();
+        },
+        increment: function(index) {
+          Vue.set(this.workouts, index, { name: this.workouts[index].name, count: this.workouts[index].count + 1 });
+        },
+        decrement: function(index) {
+          Vue.set(this.workouts, index, { name: this.workouts[index].name, count: this.workouts[index].count - 1 });
+        },
+        reset: function(index) {
+          Vue.set(this.workouts, index, { name: this.workouts[index].name, count: 0 });
+        },
+        showEditModal: function(index) {
+          this.modal = { type: "EDIT_WORKOUT", index: index, newName: this.workouts[index].name };
+        },
+        editWorkout: function() {
+          Vue.set(this.workouts, this.modal.index, { name: this.modal.newName, count: this.workouts[this.modal.index].count });
+          this.hideModal();
+        },
+        showRemoveModal: function(index) {
+          this.modal = { type: "REMOVE_WORKOUT", index: index };
+        },
+        removeWorkout: function() {
+          this.workouts.splice(this.modal.index, 1);
+          this.hideModal();
+        },
       },
-      addWorkout: function() {
-        this.workouts.push({ name: this.modal.name, count: 0 });
-        this.hideModal();
-      },
-      increment: function(index) {
-        Vue.set(this.workouts, index, { name: this.workouts[index].name, count: this.workouts[index].count + 1 });
-      },
-      decrement: function(index) {
-        Vue.set(this.workouts, index, { name: this.workouts[index].name, count: this.workouts[index].count - 1 });
-      },
-      reset: function(index) {
-        Vue.set(this.workouts, index, { name: this.workouts[index].name, count: 0 });
-      },
-      showEditModal: function(index) {
-        this.modal = { type: "EDIT_WORKOUT", index: index, newName: this.workouts[index].name };
-      },
-      editWorkout: function() {
-        Vue.set(this.workouts, this.modal.index, { name: this.modal.newName, count: this.workouts[this.modal.index].count });
-        this.hideModal();
-      },
-      showRemoveModal: function(index) {
-        this.modal = { type: "REMOVE_WORKOUT", index: index };
-      },
-      removeWorkout: function() {
-        this.workouts.splice(this.modal.index, 1);
-        this.hideModal();
-      },
-    },
-    watch: {
-      workouts: function() {
-        localStorage.workouts = JSON.stringify(this.workouts);
+      watch: {
+        workouts: function() {
+          localStorage.workouts = JSON.stringify(this.workouts);
+        }
       }
-    }
-  });
-</script>
+    });
+  </script>
+</body>
+</html>
