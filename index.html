@@ -9,11 +9,13 @@
 </head>
 <body>
   <div id="app">
-    <nav class="blue darken-2">
+    <nav class="blue darken-2" style="position: fixed; top: 0;">
       <div class="nav-wrapper container">
         <div href="#!" class="brand-logo center-align"><i class="material-icons">fitness_center</i>Habits</div>
       </div>
     </nav>
+    <div style="padding-bottom: 30px">
+    </div>
     <div v-if="modal.type === 'ADD_WORKOUT'">
       <div class="row">
         <form v-on:submit.prevent="addWorkout" style="display: inline">
