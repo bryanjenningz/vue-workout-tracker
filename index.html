@@ -69,14 +69,17 @@
         </div>
       </div>
     </div>
-    <div v-if="modal.type === 'REMOVE_WORKOUT'">
-      <h3>Are you sure you want to remove {{ workouts[modal.index].name }}?</h3>
-      <button v-on:click="removeWorkout" class="blue darken-2 waves-effect waves-light btn">
-        <i class="material-icons">check</i>
-      </button>
-      <button v-on:click="hideModal" class="blue darken-2 waves-effect waves-light btn">
-        <i class="material-icons">close</i>
-      </button>
+    <div v-if="modal.type === 'REMOVE_WORKOUT'" class="card center-align" style="position: fixed; top: 30%; height: 40%; width: 100%; z-index: 1; padding: 20px; background: #eee">
+      <i class="material-icons" style="position: absolute; top: 5%; right: 5%" v-on:click="hideModal">close</i>
+      <h3 class="card-title">Are you sure you want to remove {{ workouts[modal.index].name }}?</h3>
+      <div class="card-content">
+        <button v-on:click="removeWorkout" class="blue darken-2 waves-effect waves-light btn">
+          <i class="material-icons">check</i>
+        </button>
+        <button v-on:click="hideModal" class="blue darken-2 waves-effect waves-light btn">
+          <i class="material-icons">close</i>
+        </button>
+      </div>
     </div>
     <button
       v-if="modal.type !== 'ADD_WORKOUT'"
