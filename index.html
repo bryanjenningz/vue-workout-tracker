@@ -15,22 +15,6 @@
       </div>
     </nav>
     <div style="padding-bottom: 30px"></div>
-    <div v-if="modal.type === 'ADD_WORKOUT'">
-      <div class="row">
-        <form v-on:submit.prevent="addWorkout" style="display: inline">
-          <div class="input-field col s6">
-            <input id="first_name" class="validate" v-model="modal.name" type="text">
-            <label for="first_name">Workout Name</label>
-          </div>
-          <button class="blue darken-2 waves-effect waves-light btn">
-            <i class="material-icons">check</i>
-          </button>
-        </form>
-        <button v-on:click="hideModal" class="blue darken-2 waves-effect waves-light btn">
-          <i class="material-icons">close</i>
-        </button>
-      </div>
-    </div>
     <div v-for="(workout, i) in workouts" class="center-align">
       <h2>{{ workout.name }}</h2>
       <h3>{{ workout.count }}</h3>
@@ -50,6 +34,24 @@
         <i class="material-icons">close</i>
       </button>
       <hr>
+    </div>
+    <div v-if="modal.type === 'ADD_WORKOUT'" class="card center-align" style="position: fixed; top: 30%; height: 40%; width: 100%; z-index: 1; padding: 20px; background: #eee">
+      <i class="material-icons" style="position: absolute; top: 5%; right: 5%" v-on:click="hideModal">close</i>
+      <h3 class="card-title">Adding New Workout</h3>
+      <div class="card-content">
+        <form v-on:submit.prevent="addWorkout" style="display: inline">
+          <div class="input-field col s6">
+            <input id="first_name" class="validate" v-model="modal.name" type="text">
+            <label for="first_name">Workout Name</label>
+          </div>
+          <button class="blue darken-2 waves-effect waves-light btn">
+            <i class="material-icons">check</i>
+          </button>
+        </form>
+        <button v-on:click="hideModal" class="blue darken-2 waves-effect waves-light btn">
+          <i class="material-icons">close</i>
+        </button>
+      </div>
     </div>
     <div v-if="modal.type === 'EDIT_WORKOUT'" class="card center-align" style="position: fixed; top: 30%; height: 40%; width: 100%; z-index: 1; padding: 20px; background: #eee">
       <i class="material-icons" style="position: absolute; top: 5%; right: 5%" v-on:click="hideModal">close</i>
