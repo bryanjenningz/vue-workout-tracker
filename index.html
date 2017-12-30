@@ -30,13 +30,6 @@
         </button>
       </div>
     </div>
-    <button
-      v-if="modal.type !== 'ADD_WORKOUT'"
-      v-on:click="showAddModal"
-      class="btn-floating btn-large waves-effect waves-light blue darken-2"
-      style="position: fixed; bottom: 5%; right: 5%">
-      <i class="material-icons">add</i>
-    </button>
     <div v-for="(workout, i) in workouts" class="center-align">
       <h2>{{ workout.name }}</h2>
       <h3>{{ workout.count }}</h3>
@@ -81,6 +74,13 @@
         <i class="material-icons">close</i>
       </button>
     </div>
+    <button
+      v-if="modal.type !== 'ADD_WORKOUT'"
+      v-on:click="showAddModal"
+      class="btn-floating btn-large waves-effect waves-light blue darken-2"
+      style="position: fixed; bottom: 5%; right: 5%">
+      <i class="material-icons">add</i>
+    </button>
   </div>
   <script>
     const app = new Vue({
