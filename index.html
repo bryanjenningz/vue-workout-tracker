@@ -14,8 +14,7 @@
         <div href="#!" class="brand-logo center-align"><i class="material-icons">fitness_center</i>Habits</div>
       </div>
     </nav>
-    <div style="padding-bottom: 30px">
-    </div>
+    <div style="padding-bottom: 30px"></div>
     <div v-if="modal.type === 'ADD_WORKOUT'">
       <div class="row">
         <form v-on:submit.prevent="addWorkout" style="display: inline">
@@ -52,19 +51,22 @@
       </button>
       <hr>
     </div>
-    <div v-if="modal.type === 'EDIT_WORKOUT'">
-      <h3>Editing {{ workouts[modal.index].name }}</h3>
-      <div class="row">
+    <div v-if="modal.type === 'EDIT_WORKOUT'" class="card center-align" style="position: fixed; top: 30%; height: 40%; width: 100%; z-index: 1; padding: 20px; background: #eee">
+      <i class="material-icons" style="position: absolute; top: 5%; right: 5%" v-on:click="hideModal">close</i>
+      <h3 class="card-title">Editing {{ workouts[modal.index].name }}</h3>
+      <div class="card-content">
         <div class="input-field col s6">
-          <input id="new_name" v-model="modal.newName" class="validate" type="text" placeholder="e.g. Pushups">
+          <input id="new_name" v-model="modal.newName" class="validate" type="text">
           <label for="new_name">New Workout Name</label>
         </div>
-        <button v-on:click="editWorkout" class="blue darken-2 waves-effect waves-light btn">
-          <i class="material-icons">check</i>
-        </button>
-        <button v-on:click="hideModal" class="blue darken-2 waves-effect waves-light btn">
-          <i class="material-icons">close</i>
-        </button>
+        <div>
+          <button v-on:click="editWorkout" class="blue darken-2 waves-effect waves-light btn">
+            <i class="material-icons">check</i>
+          </button>
+          <button v-on:click="hideModal" class="blue darken-2 waves-effect waves-light btn">
+            <i class="material-icons">close</i>
+          </button>
+        </div>
       </div>
     </div>
     <div v-if="modal.type === 'REMOVE_WORKOUT'">
@@ -112,7 +114,7 @@
           Vue.set(this.workouts, index, { name: this.workouts[index].name, count: 0 });
         },
         showEditModal: function(index) {
-          this.modal = { type: "EDIT_WORKOUT", index: index, newName: this.workouts[index].name };
+          this.modal = { type: "EDIT_WORKOUT", index: index, newName: "" };
         },
         editWorkout: function() {
           Vue.set(this.workouts, this.modal.index, { name: this.modal.newName, count: this.workouts[this.modal.index].count });
